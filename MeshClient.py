@@ -42,7 +42,7 @@ def sender_thread():
     global node_id, lora_client, message_counter, master_node
     while True:
         acquire_lock("sender")
-        print("Sender Thread")
+        print("Sender thread")
 
         # format message to master client
         msg = copy.deepcopy(PAYLOAD_FORMAT)
@@ -81,7 +81,7 @@ def receiver_thread():
     global node_id, lora_client, message_counter, master_node
     while True:
         acquire_lock("receiver")
-        print("Receiver")
+        print("Receiver thread")
 
         # receive a message
         recv_msg = None
@@ -112,11 +112,15 @@ def receiver_thread():
 
 if __name__ == "__main__":
 
-    global node_id, lora_client, message_counter, master_node
-    node_id = "client-1"
-    lora_client = LoraClient()
+    parser = argparse.ArgumentParser(description='LoRa Mesh Client')
+    parser.add_argument('--node-id', required=True, help="id assigned to node")
+    parser.add_argument('--gateway-id', required=True, help="id of the gateway node")
+    args = parser.parse_args()
+
+    node_id = args.node_id
+    master_node = args.gateway_id
     message_counter = 0
-    master_node = "client-3"
+    lora_client = LoraClient()
 
     thread1 = Thread(target=sender_thread, args=())
     thread2 = Thread(target=receiver_thread, args=())
