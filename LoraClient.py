@@ -44,7 +44,7 @@ class LoraClient:
                     payload = self.lora_client.receive_packet()
                     break
                 elif ((time.time() - t) > timeout):
-                    raise Exception("Receive Timeout")
+                    raise Exception("ReceiveTimeout")
                 time.sleep(0.1)
         except Exception as e:
             print ("Error receiving message")

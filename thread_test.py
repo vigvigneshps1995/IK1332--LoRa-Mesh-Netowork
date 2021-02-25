@@ -18,10 +18,10 @@ message_counter = 0
 
 # this is the format of message that is send across all the nodes
 PAYLOAD_FORMAT = {
-    "src": None                 # src device id
-    "dst": None                 # dst device id
-    "type": None                # type of payload (MSG/ACK/FLOOD)
-    "payload": None             # payload
+    "src": None,                 # src device id
+    "dst": None,                 # dst device id
+    "type": None,                # type of payload (MSG/ACK/FLOOD)
+    "payload": None,             # payload
     "msg_id": None              # message counter
 }
 
@@ -86,22 +86,27 @@ def receiver_thread():
         print("Receiver")
 
         # receive a message
-        recv_msg = lora_client.receive_packet(timeout=READ_TIMEOUT)
-        
+        recv_msg = None
+        try:
+            recv_msg = lora_client.receive_payload(timeout=READ_TIMEOUT)
+        except Exception("ReceiveTimeout"):
+            pass
+
         # received message to this node so send ack
-        if recv_msg['type'] == "MSG" and recv_msg['dst'] == node_id:
-            ack_msg = copy.deepcopy(PAYLOAD_FORMAT)
-            ack_msg["src"] = node_id
-            ack_msg["dst"] = recv_msg['src']
-            ack_msg["msg_id"] = recv_msg['message_counter']
-            ack_msg["type"] = "ACK"
+        if recv_msg:
+            if recv_msg['type'] == "MSG" and recv_msg['dst'] == node_id:
+                ack_msg = copy.deepcopy(PAYLOAD_FORMAT)
+                ack_msg["src"] = node_id
+                ack_msg["dst"] = recv_msg['src']
+                ack_msg["msg_id"] = recv_msg['message_counter']
+                ack_msg["type"] = "ACK"
 
-            # send ack
-            lora_client.send_payload(ack_msg)
+                # send ack
+                lora_client.send_payload(ack_msg)
 
-        # flood request
-        if recv_msg['type'] == "FLOOD":
-            lora_client.send_payload(recv_msg)
+            # flood request
+            if recv_msg['type'] == "FLOOD":
+                lora_client.send_payload(recv_msg)
 
         # release the lock on variables
         release_lock()
