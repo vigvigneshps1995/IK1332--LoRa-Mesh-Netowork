@@ -57,7 +57,7 @@ def sender_thread():
         ack_recevied = False
         t = time.time()
         ack = lora_client.receive_payload(timeout=ACK_TIMEOUT)
-        if ack and ack['type'] == "ACK" and ack['msg_id'] == message_counter:
+        if ack and ack['type'] == "ACK" and ack['msg_id'] == message_counter and ack['src'] == master_node:
             ack_recevied = True
 
         # update message counter if ack is received
@@ -72,10 +72,11 @@ def sender_thread():
             msg['msg_id'] = message_counter
             lora_client.send_payload(msg)
             message_counter += 1
+            time.sleep(3)           # so all the floods msg are cleared
 
         # send hello message every 5 seconds
         release_lock()
-        time.sleep(10)
+        time.sleep(30)
 
 def receiver_thread():
     global node_id, lora_client, message_counter, master_node
@@ -103,7 +104,7 @@ def receiver_thread():
                 lora_client.send_payload(ack_msg)
 
             # flood request
-            if recv_msg['type'] == "FLOOD":
+            if recv_msg['src'] =! node_id and recv_msg['type'] == "FLOOD":
                 lora_client.send_payload(recv_msg)
 
         # release the lock on variables
