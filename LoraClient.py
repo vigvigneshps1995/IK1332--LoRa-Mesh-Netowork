@@ -11,6 +11,9 @@ LORA_CR = 8
 LORA_RECEIVE_TIMEOUT = 5         # in seconds
 
 
+
+
+
 class LoraClient:
 
     def __init__(self, freq=LORA_FREQ, bw=LORA_BW, sf=LORA_SF, cr=LORA_CR, enable_crc=True):
@@ -27,8 +30,8 @@ class LoraClient:
 
     def send_payload(self, payload):
         try:
-            print ("Sending payload: ")
-            print (json.dumps(payload, indent=2))
+            # print ("Sending payload: ")
+            # print (json.dumps(payload, indent=2))
             self.lora_client.send_packet(json.dumps(payload))
         except Exception as e:
             print ("Error sending message")
@@ -52,8 +55,8 @@ class LoraClient:
                 print (str(e))
         else:
             payload = json.loads(str(payload))
-            print ("Payload Received: ")
-            print (json.dumps(payload, indent=2))
+            # print ("Payload Received: ")
+            # print (json.dumps(payload, indent=2))
         return payload
 
 
