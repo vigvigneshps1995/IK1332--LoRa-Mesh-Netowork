@@ -8,7 +8,7 @@ LORA_FREQ = 866 * 1000000
 LORA_BW = 125 * 1000
 LORA_SF = 8
 LORA_CR = 8
-LORA_RECEIVE_TIMEOUT = 5 * 60        # in seconds
+LORA_RECEIVE_TIMEOUT = 5         # in seconds
 
 
 class LoraClient:
@@ -43,12 +43,13 @@ class LoraClient:
                 if self.lora_client.packet_available():
                     payload = self.lora_client.receive_packet()
                     break
-                elif ((time.time() - t) > timeout):
+                elif time.time() - t > timeout:
                     raise Exception("ReceiveTimeout")
                 time.sleep(0.1)
         except Exception as e:
-            print ("Error receiving message")
-            print (str(e))
+            if str(e) != "ReceiveTimeout":
+                print ("Error receiving message")
+                print (str(e))
         else:
             payload = json.loads(str(payload))
             print ("Payload Received: ")
