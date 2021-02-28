@@ -37,7 +37,7 @@ def sender_thread(node_id, gw_id, send_q, recv_q, mode, temp_attached):
         time.sleep(10)
 
 
-def receiver_thread(node_id, gw_id, send_q, recv_q, mode):
+def receiver_thread(node_id, gw_id, send_q, recv_q, mode, ttn_api=None):
     while True:
         # receive a message
         recv_msg = None
@@ -47,6 +47,7 @@ def receiver_thread(node_id, gw_id, send_q, recv_q, mode):
             if mode == "MASTER":
                 print ("Message Received from %s" % recv_msg['src'])
                 print_payload(recv_msg)
+                ttn_api.send_to_ttn(recv_msg['src'], recv_msg['payload'])
             if mode == "BRIDGE":
                 print ("Bridging from %s to %s" % (recv_msg['src'], gw_id))
                 recv_msg['src'] = node_id
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     gw_id = args.gateway_id
     mode = args.mode
     temp_attached = False
-    if temp:
+    if args.temp:
         from Temperature import read_temp
         temp_attached = True
 
@@ -90,7 +91,9 @@ if __name__ == "__main__":
 
     if mode == "MASTER":
         print ("Starting mesh client in %s MODE" % mode)
-        thread1 = Thread(target=receiver_thread, args=(node_id, gw_id, send_q, recv_q, mode))
+        from TTNGatewayAPI import TTNGatewayAPI
+        ttn_api = TTNGatewayAPI()
+        thread1 = Thread(target=receiver_thread, args=(node_id, gw_id, send_q, recv_q, mode, ttn_api))
         thread1.start()
         thread1.join()
         p.join()
@@ -104,3 +107,4 @@ if __name__ == "__main__":
         thread1.join()
         thread2.join()
         p.join()
+
