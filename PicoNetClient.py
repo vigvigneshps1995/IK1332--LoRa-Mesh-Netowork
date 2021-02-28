@@ -29,7 +29,7 @@ def sender_thread(node_id, gw_id, send_q, recv_q, mode, temp_attached):
         send_msg["dst"] = gw_id
         if temp_attached:
             send_msg["payload"] = "%s : Hello from %s. Temperature in Celcius: " % (str(datetime.datetime.now()), node_id, str(read_temp()[0]))
-        if temp_attached:
+        else:
             send_msg["payload"] = "%s : Hello from %s " % (str(datetime.datetime.now()), node_id)
         print_payload(send_msg)
         send_q.put(send_msg)
