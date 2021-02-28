@@ -20,14 +20,17 @@ def print_payload(payload):
     print ("\tMessage: %s -> %s\t\t%s\n" % (payload['src'], payload['dst'], payload['payload']))
 
 
-def sender_thread(node_id, gw_id, send_q, recv_q, mode):
+def sender_thread(node_id, gw_id, send_q, recv_q, mode, temp_attached):
     while True:
         # format message to master client
         print ("Sending to gateway %s" % gw_id)
         send_msg = copy.deepcopy(PAYLOAD_FORMAT)
         send_msg["src"] = node_id
         send_msg["dst"] = gw_id
-        send_msg["payload"] = "%s : Hello from %s " % (str(datetime.datetime.now()), node_id)
+        if temp_attached:
+            send_msg["payload"] = "%s : Hello from %s. Temperature in Celcius: " % (str(datetime.datetime.now()), node_id, str(read_temp()[0]))
+        if temp_attached:
+            send_msg["payload"] = "%s : Hello from %s " % (str(datetime.datetime.now()), node_id)
         print_payload(send_msg)
         send_q.put(send_msg)
         # sleep for 30 seconds for next update
@@ -59,12 +62,17 @@ if __name__ == "__main__":
     parser.add_argument('--mode', required=True, help="The operating mode of the client. SLAVE | MASTER | BRIDGE ")
     parser.add_argument('--node-id', required=True, help="id assigned to node")
     parser.add_argument('--gateway-id', required=True, help="id of the gateway node")
+    parser.add_argument('--temp', required=False, default=False, type=bool, help="id of the gateway node")
     args = parser.parse_args()
 
     # operating parameters
     node_id = args.node_id
     gw_id = args.gateway_id
     mode = args.mode
+    temp_attached = False
+    if temp:
+        from Temperature import read_temp
+        temp_attached = True
 
     # start the lora client process
     send_q, recv_q = Queue(), Queue()
@@ -75,7 +83,7 @@ if __name__ == "__main__":
     # start threads
     if mode == "SLAVE":
         print ("Starting mesh client in %s MODE" % mode)
-        thread1 = Thread(target=sender_thread, args=(node_id, gw_id, send_q, recv_q, mode))
+        thread1 = Thread(target=sender_thread, args=(node_id, gw_id, send_q, recv_q, mode, temp_attached))
         thread1.start()
         thread1.join()
         p.join()
@@ -89,7 +97,7 @@ if __name__ == "__main__":
 
     if mode == "BRIDGE":
         print ("Starting mesh client in %s MODE" % mode)
-        thread1 = Thread(target=sender_thread, args=(node_id, gw_id, send_q, recv_q, mode))
+        thread1 = Thread(target=sender_thread, args=(node_id, gw_id, send_q, recv_q, mode, temp_attached))
         thread2 = Thread(target=receiver_thread, args=(node_id, gw_id, send_q, recv_q, mode))
         thread1.start()
         thread2.start()
