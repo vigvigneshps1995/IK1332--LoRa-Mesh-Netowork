@@ -7,7 +7,7 @@ default_access_key = "ttn-account-v2.xWre66wLgzqM0ut1nICTkASjZgQXr666usHS8C7kYQE
 
 
 # class using mqtt client
-class ttnGatewayAPI:
+class TTNGatewayAPI:
     def __init__(self, app_id=default_app_id, access_key=default_access_key):
         handler = ttn.HandlerClient(app_id, access_key)
         self.mqtt_client = handler.data()
@@ -19,7 +19,7 @@ class ttnGatewayAPI:
 
 if __name__ == "__main__":
     #using application manager client
-    LoRAmash_gateway = ttnGatewayAPI()
+    LoRAmash_gateway = TTNGatewayAPI()
 
     N = 10
     dev_id = "lora_pi1_test"
