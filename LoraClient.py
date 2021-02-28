@@ -34,8 +34,10 @@ class LoraClient:
                     payload = self.send_queue.get()
                     #print ("Sending payload: ")
                     #print (json.dumps(payload, indent=2))
-                    self.lora_client.send_packet(json.dumps(payload))
-                    time.sleep(1)
+                    while True:
+                        if self.lora_client.rssi() < -50:
+                            self.lora_client.send_packet(json.dumps(payload))
+                    time.sleep(0.5)
             except Exception as e:
                 print ("Error sending message")
                 print (str(e))
