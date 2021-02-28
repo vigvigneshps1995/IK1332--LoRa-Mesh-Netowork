@@ -48,9 +48,9 @@ def receiver_thread(node_id, gw_id, send_q, recv_q, mode, ttn_api=None):
                 print ("Message Received from %s" % recv_msg['src'])
                 print_payload(recv_msg)
                 ttn_api.send_to_ttn(recv_msg['src'], recv_msg['payload'])
-            if mode == "BRIDGE":
+            if mode == "BRIDGE" and recv_msg['dst'] == node_id:
                 print ("Bridging from %s to %s" % (recv_msg['src'], gw_id))
-                recv_msg['src'] = node_id
+                # recv_msg['src'] = node_id
                 recv_msg['dst'] = gw_id
                 print_payload(recv_msg)
                 send_q.put(recv_msg)
