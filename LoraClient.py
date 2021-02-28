@@ -15,10 +15,10 @@ class LoraClient:
     def __init__(self, send_q, recv_q):
         self.lora_client = PyLora
         self.lora_client.init()
-        self.lora_client.set_frequency(LoraClient_MP.LORA_FREQ)
-        self.lora_client.set_bandwidth(LoraClient_MP.LORA_BW)
-        self.lora_client.set_coding_rate(LoraClient_MP.LORA_CR)
-        self.lora_client.set_spreading_factor(LoraClient_MP.LORA_SF)
+        self.lora_client.set_frequency(LoraClient.LORA_FREQ)
+        self.lora_client.set_bandwidth(LoraClient.LORA_BW)
+        self.lora_client.set_coding_rate(LoraClient.LORA_CR)
+        self.lora_client.set_spreading_factor(LoraClient.LORA_SF)
         self.lora_client.enable_crc()
 
         # queues
@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     send_q = Queue()
     recv_q = Queue()
-    c = LoraClient_MP(send_q, recv_q)
+    c = LoraClient(send_q, recv_q)
 
     p = Process(target=c.start_client)
     p.start()
