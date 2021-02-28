@@ -13,7 +13,7 @@ class TTNGatewayAPI:
         self.mqtt_client = handler.data()
         self.mqtt_client.connect()
 
-    def send_to_gateway(self, dev_id, payload):
+    def send_to_ttn(self, dev_id, payload):
         self.mqtt_client.send(dev_id, payload)
 
 
@@ -27,5 +27,5 @@ if __name__ == "__main__":
 
     #print all the number from 0 to 9 (10 is excluded)
     for i in range(N):
-            LoRAmash_gateway.send_to_gateway(dev_id, payload)
+            LoRAmash_gateway.send_to_ttn(dev_id, payload)
             time.sleep(3)
