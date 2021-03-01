@@ -1,6 +1,7 @@
 import time
 import json
 import copy
+import random
 import argparse
 import datetime
 from threading import Thread
@@ -34,7 +35,7 @@ def sender_thread(node_id, gw_id, send_q, recv_q, mode, temp_attached):
         print_payload(send_msg)
         send_q.put(send_msg)
         # sleep for 30 seconds for next update
-        time.sleep(10)
+        time.sleep(2 + random.randint(1, 5))
 
 
 def receiver_thread(node_id, gw_id, send_q, recv_q, mode, ttn_api=None):
