@@ -48,6 +48,7 @@
 #define REG_SYNC_WORD                  0x39
 #define REG_DIO_MAPPING_1              0x40
 #define REG_VERSION                    0x42
+#define REG_PA_DAC                     0x4d
 
 /*
  * Transceiver modes
@@ -248,8 +249,40 @@ lora_set_tx_power(int level)
    if (level < 2) level = 2;
    else if (level > 17) level = 17;
    lock();
+   lora_write_reg(REG_PA_DAC, 0x84);
    lora_write_reg(REG_PA_CONFIG, PA_BOOST | (level - 2));
    unlock();
+}
+
+/**
+ * Set carrier frequency.
+ * @param frequency Frequency in Hz
+ */
+void 
+lora_set_gain(int gain)
+{
+  // check allowed range
+  if (gain > 6) {
+    gain = 6;
+  }
+  
+  // set to standby
+  lora_idle();
+  
+  lock();
+  // set gain
+  if (gain == 0) {
+    // if gain = 0, enable AGC
+    lora_write_reg(REG_MODEM_CONFIG_3, 0x04);
+  } else {
+    // disable AGC
+    lora_write_reg(REG_MODEM_CONFIG_3, 0x00);
+    // clear Gain and set LNA boost
+    lora_write_reg(REG_LNA, 0x03);
+    // set gain
+    lora_write_reg(REG_LNA, lora_read_reg(REG_LNA) | (gain << 5));
+  }
+  unlock();
 }
 
 /**

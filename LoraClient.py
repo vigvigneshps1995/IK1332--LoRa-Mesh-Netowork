@@ -67,5 +67,5 @@ if __name__ == "__main__":
     p.start()
     while (True):
         send_q.put({"hello": "hi"})
-        time.sleep(1)
+        time.sleep(5)
     p.join()

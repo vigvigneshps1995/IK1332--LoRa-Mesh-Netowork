@@ -8,6 +8,7 @@ from threading import Thread
 from multiprocessing import Process, Queue
 from LoraClient import LoraClient
 
+random.seed(1)
 
 # this is the format of message that is send across all the nodes
 PAYLOAD_FORMAT = {

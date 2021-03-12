@@ -80,6 +80,24 @@ set_frequency(PyObject *self, PyObject *args)
 }
 
 static PyObject *
+set_gain(PyObject *self, PyObject *args)
+{
+   int gain;
+   if(!check()) return NULL;
+   if(!PyArg_ParseTuple(args, "i", &gain)) return NULL;
+   lora_set_gain(gain);
+   Py_RETURN_NONE;
+}
+
+static PyObject *
+dump_registers(PyObject *self, PyObject *args)
+{
+   if(!check()) return NULL;
+   lora_dump_registers();
+   Py_RETURN_NONE;
+}
+
+static PyObject *
 set_spreading_factor(PyObject *self, PyObject *args)
 {
    int sf;
@@ -344,6 +362,8 @@ static PyMethodDef metodos[] = {
    { "receive", receive, METH_NOARGS, "Put the radio in RX mode" },
    { "set_tx_power", set_tx_power, METH_VARARGS, "Set output power" },
    { "set_frequency", set_frequency, METH_VARARGS, "Set channel frequency" },
+   { "set_gain", set_gain, METH_VARARGS, "Set rx gain" },
+   { "dump_registers", dump_registers, METH_NOARGS, "Dump all register values" },
    { "set_spreading_factor", set_spreading_factor, METH_VARARGS, "Set spreading factor" },
    { "set_bandwidth", set_bandwidth, METH_VARARGS, "Set signal bandwidth" },
    { "set_coding_rate", set_coding_rate, METH_VARARGS, "Set coding rate denominator" },

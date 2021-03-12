@@ -10,6 +10,8 @@ void lora_sleep(void);
 void lora_receive(void);
 void lora_set_tx_power(int level);
 void lora_set_frequency(long frequency);
+void lora_set_gain(int gain);
+void lora_dump_registers(void);
 void lora_set_spreading_factor(int sf);
 void lora_set_bandwidth(long sbw);
 void lora_set_coding_rate(int denominator);
